@@ -28,6 +28,9 @@ export const defaultSiteSettings: SiteSettings = {
       title: "Institucional",
       links: [
         { label: "Sobre", href: "/sobre" },
+        { label: "Contato", href: "/contato" },
+        { label: "Política de privacidade", href: "/politica-de-privacidade" },
+        { label: "Termos de uso", href: "/termos-de-uso" },
         { label: "Política editorial", href: "/politica-editorial" },
         { label: "Política de cookies", href: "/politica-de-cookies" },
         { label: "Aviso legal", href: "/aviso-legal" },
@@ -174,5 +177,32 @@ export const defaultPages: Record<string, SitePage> = {
       },
     ],
     cta: { label: "Voltar para o blog", href: "/" },
+  },
+  contato: {
+    slug: "contato", eyebrow: "Fale conosco", title: "Contato", seoTitle: "Contato", seoDescription: "Entre em contato com o Grana em Ordem.",
+    description: "Use este canal para dúvidas editoriais, sugestões de pauta, correções ou assuntos relacionados ao site.",
+    sections: [
+      { title: "Canal de contato", body: "Envie sua mensagem para dev@nucleodigitalofc.com. Procuramos responder solicitações legítimas com clareza e em prazo razoável." },
+      { title: "Correções e atualizações", body: "Caso identifique uma informação desatualizada ou imprecisa, informe o endereço do artigo, o ponto específico e, quando possível, uma fonte confiável." },
+      { title: "Privacidade", body: "Não envie senhas, dados bancários, documentos ou outras informações sensíveis pelo e-mail de contato." },
+    ], cta: { label: "Ler artigos", href: "/" },
+  },
+  "politica-de-privacidade": {
+    slug: "politica-de-privacidade", eyebrow: "Privacidade", title: "Política de privacidade", seoTitle: "Política de privacidade", seoDescription: "Saiba como o Grana em Ordem trata dados e preferências.",
+    description: "Esta política explica quais informações podem ser tratadas durante a navegação e como o leitor controla suas preferências.",
+    sections: [
+      { title: "Dados de navegação", body: "Podemos tratar dados técnicos e agregados necessários para segurança, funcionamento e análise de desempenho do site." },
+      { title: "Cookies e estatísticas", body: "Ferramentas de estatísticas só são carregadas quando você autoriza a categoria correspondente no aviso de cookies. Você pode mudar a escolha pelo navegador a qualquer momento." },
+      { title: "Seus direitos", body: "Para dúvidas ou solicitações relacionadas a dados pessoais, entre em contato pelo e-mail dev@nucleodigitalofc.com." },
+    ], cta: { label: "Política de cookies", href: "/politica-de-cookies" },
+  },
+  "termos-de-uso": {
+    slug: "termos-de-uso", eyebrow: "Uso do site", title: "Termos de uso", seoTitle: "Termos de uso", seoDescription: "Condições de uso do Grana em Ordem.",
+    description: "Ao utilizar o site, você concorda em usar seu conteúdo de forma responsável e compatível com sua finalidade educativa.",
+    sections: [
+      { title: "Finalidade educativa", body: "Os materiais publicados são informativos e não constituem recomendação individual de investimento, aconselhamento jurídico, contábil ou tributário." },
+      { title: "Propriedade intelectual", body: "Textos, identidade visual e demais materiais do site não podem ser reproduzidos integralmente sem autorização, salvo nos limites legais." },
+      { title: "Atualizações", body: "Estes termos podem ser atualizados para refletir mudanças legais, técnicas ou editoriais. A versão vigente estará sempre disponível nesta página." },
+    ], cta: { label: "Ver aviso legal", href: "/aviso-legal" },
   },
 };
