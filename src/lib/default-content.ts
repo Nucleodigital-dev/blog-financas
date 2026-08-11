@@ -12,6 +12,7 @@ export const defaultSiteSettings: SiteSettings = {
     { label: "Investimentos", categorySlug: "investimentos" },
     { label: "Renda Extra", categorySlug: "renda-extra" },
     { label: "Planejamento", categorySlug: "planejamento-financeiro" },
+    { label: "Equipe editorial", href: "/quem-escreve" },
     { label: "Sobre", href: "/sobre" },
   ],
   footerColumns: [
@@ -34,6 +35,7 @@ export const defaultSiteSettings: SiteSettings = {
         { label: "Política editorial", href: "/politica-editorial" },
         { label: "Política de cookies", href: "/politica-de-cookies" },
         { label: "Aviso legal", href: "/aviso-legal" },
+        { label: "Equipe editorial", href: "/quem-escreve" },
       ],
     },
   ],
@@ -107,6 +109,10 @@ export const defaultPages: Record<string, SitePage> = {
       {
         title: "Atualizações",
         body: "Conteúdos podem ser revisados conforme mudanças de regulamentação, novas taxas, alterações tributárias ou melhorias editoriais. A data exibida no artigo ajuda o leitor a entender a recência do material.",
+      },
+      {
+        title: "Autoria e revisão",
+        body: "Cada texto deve identificar sua autoria editorial e, quando o assunto exigir conhecimento técnico específico — como tributos, produtos de investimento, crédito ou regulamentação — passar por revisão compatível com o tema. Não apresentamos conteúdo educativo como recomendação individual.",
       },
       {
         title: "Independência editorial",
