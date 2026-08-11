@@ -6,7 +6,7 @@ import { absoluteUrl, siteDescription, siteName, siteUrl } from "@/lib/site";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ConsentCenter } from "@/components/ConsentCenter";
 import { UserPreferenceRuntime } from "@/components/UserPreferenceRuntime";
-import { getAllArticles, getCategories, getSiteSettings } from "@/lib/content";
+import { getCategories, getSiteSettings } from "@/lib/content";
 import type { Category } from "@/lib/content-types";
 
 export const dynamic = "force-dynamic";
@@ -56,21 +56,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [categories, settings, articles]: [Category[], Awaited<ReturnType<typeof getSiteSettings>>, Awaited<ReturnType<typeof getAllArticles>>] = await Promise.all([
+  const [categories, settings]: [Category[], Awaited<ReturnType<typeof getSiteSettings>>] = await Promise.all([
     getCategories(),
     getSiteSettings(),
-    getAllArticles(),
   ]);
-  const publishedCategorySlugs = new Set(
-    articles.map((article) => article.cat_slug).filter((slug): slug is string => Boolean(slug))
-  );
-  const visibleNavigationItems = (settings.navigationItems || []).filter(
-    (item) => !item.categorySlug || publishedCategorySlugs.has(item.categorySlug)
-  );
-  const visibleFooterColumns = (settings.footerColumns || []).map((column) => ({
-    ...column,
-    links: column.links.filter((link) => !link.categorySlug || publishedCategorySlugs.has(link.categorySlug)),
-  }));
   const logo = settings.logo || "/logo.png";
   const logoAlt = settings.logoAlt || settings.title || siteName;
 
@@ -79,7 +68,7 @@ export default async function RootLayout({
       <body>
         <SiteHeader
           categories={categories}
-          navigationItems={visibleNavigationItems}
+          navigationItems={settings.navigationItems || []}
           logo={logo}
           logoAlt={logoAlt}
         />
@@ -114,7 +103,7 @@ export default async function RootLayout({
                   {settings.footerDescription || settings.description || siteDescription}
                 </p>
               </div>
-              {visibleFooterColumns.map((column) => (
+              {(settings.footerColumns || []).map((column) => (
                 <div key={column.title}>
                   <h3 style={{ marginBottom: 16, color: "var(--foreground)", fontFamily: "var(--font-heading)" }}>{column.title}</h3>
                   <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 8 }}>
