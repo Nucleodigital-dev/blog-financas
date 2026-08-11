@@ -1,39 +1,87 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Equipe editorial",
-  description: "Entenda como o Grana em Ordem produz, revisa e atualiza seus conteúdos educativos.",
+  description: "Conheça os profissionais responsáveis pela autoria e revisão técnica do Grana em Ordem.",
   alternates: { canonical: "/quem-escreve" },
 };
 
+const team = [
+  {
+    name: "Roberto Almeida",
+    role: "Economista e revisor técnico",
+    image: "/roberto-almeida.webp",
+    alt: "Roberto Almeida",
+    summary: "Revisa o conteúdo para garantir precisão nas análises, taxas e estratégias financeiras apresentadas no site.",
+    bio: "Formado em Ciências Econômicas pela FGV, com MBA em Finanças e Controladoria. Possui mais de 15 anos de experiência no mercado financeiro e atua como consultor de investimentos.",
+    expertise: ["Economia", "Investimentos", "Revisão técnica"],
+  },
+  {
+    name: "Camila Rocha",
+    role: "Redatora especialista em finanças pessoais",
+    image: "/camila-rocha.webp",
+    alt: "Camila Rocha",
+    summary: "Autora dos conteúdos sobre orçamento, dívidas, poupança e organização financeira no dia a dia.",
+    bio: "Jornalista econômica formada pela PUC, com certificação em Planejamento Financeiro Pessoal (CFP). Há sete anos, ensina pessoas a organizar o orçamento, sair das dívidas e começar a poupar de forma prática.",
+    expertise: ["Orçamento", "Dívidas", "Planejamento financeiro"],
+  },
+  {
+    name: "Thiago Silva",
+    role: "Analista de cartões e investimentos",
+    image: "/thiago-silva.webp",
+    alt: "Thiago Silva",
+    summary: "Produz análises e tutoriais sobre cartões, milhas e investimentos para iniciantes.",
+    bio: "Administrador de Empresas pelo Insper e investidor independente há dez anos. É especialista em milhas, cartões de crédito e investimentos para iniciantes.",
+    expertise: ["Cartões", "Milhas", "Investimentos para iniciantes"],
+  },
+];
+
 export default function QuemEscrevePage() {
   return (
-    <article style={{ maxWidth: 880, margin: "0 auto", padding: "24px 0 64px" }}>
+    <article style={{ maxWidth: 960, margin: "0 auto", padding: "24px 0 64px" }}>
       <p style={{ color: "var(--primary)", fontWeight: 800 }}>TRANSPARÊNCIA EDITORIAL</p>
-      <h1>Equipe editorial do Grana em Ordem</h1>
-      <p style={{ color: "var(--text-muted)", lineHeight: 1.7 }}>
-        O Grana em Ordem publica conteúdo educativo sobre finanças pessoais. Nosso compromisso é explicar conceitos de forma clara, indicar limites e manter os leitores informados quando um tema exige confirmação em fontes oficiais ou orientação individualizada.
+      <h1>Quem escreve no Grana em Ordem</h1>
+      <p style={{ color: "var(--text-muted)", lineHeight: 1.7, maxWidth: 760 }}>
+        Conheça os profissionais responsáveis pela autoria, análise e revisão técnica dos conteúdos. O site tem finalidade educativa e não substitui recomendação financeira, contábil, jurídica ou tributária individual.
       </p>
 
-      <section>
-        <h2>Como os conteúdos são produzidos</h2>
-        <p>
-          Cada artigo parte de uma dúvida prática, passa por revisão editorial e deve usar fontes verificáveis quando abordar regras, impostos, taxas, investimentos, crédito ou produtos financeiros. Conteúdos desatualizados são revisados, ampliados ou retirados de circulação.
-        </p>
-      </section>
+      <div style={{ display: "grid", gap: 24, marginTop: 36 }}>
+        {team.map((member) => (
+          <section
+            key={member.name}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "minmax(160px, 240px) minmax(0, 1fr)",
+              gap: 28,
+              padding: 28,
+              border: "1px solid var(--border)",
+              borderRadius: 20,
+              background: "var(--card-bg)",
+            }}
+          >
+            <div style={{ position: "relative", aspectRatio: "1 / 1", overflow: "hidden", borderRadius: 16 }}>
+              <Image src={member.image} alt={member.alt} fill sizes="(max-width: 640px) 100vw, 240px" style={{ objectFit: "cover" }} />
+            </div>
+            <div>
+              <p style={{ color: "var(--primary)", fontWeight: 800, margin: "0 0 6px", textTransform: "uppercase", fontSize: "0.8rem" }}>{member.role}</p>
+              <h2 style={{ margin: "0 0 12px", fontFamily: "var(--font-heading)" }}>{member.name}</h2>
+              <p style={{ lineHeight: 1.7 }}>{member.summary}</p>
+              <p style={{ color: "var(--text-muted)", lineHeight: 1.7 }}>{member.bio}</p>
+              <p style={{ marginBottom: 0, fontWeight: 700 }}>{member.expertise.join(" · ")}</p>
+            </div>
+          </section>
+        ))}
+      </div>
 
-      <section>
-        <h2>Limites e responsabilidade</h2>
+      <section style={{ marginTop: 44 }}>
+        <h2>Como os conteúdos são produzidos e revisados</h2>
         <p>
-          O material do site não é recomendação personalizada de investimento, orientação contábil, jurídica ou tributária. Decisões financeiras dependem de renda, objetivos, prazo, dívidas, perfil de risco e da regra vigente; por isso, fontes oficiais e profissionais habilitados devem ser consultados quando necessário.
+          Cada artigo parte de uma dúvida prática, recebe revisão editorial e deve apontar fontes verificáveis quando abordar regras, impostos, taxas, investimentos, crédito ou produtos financeiros. Conteúdos desatualizados são revisados, ampliados ou retirados de circulação.
         </p>
-      </section>
-
-      <section>
-        <h2>Atualizações, correções e autoria</h2>
         <p>
-          Estamos estruturando a identificação individual de autores e revisores para que cada conteúdo traga a atribuição adequada. Enquanto essa página é finalizada, dúvidas, correções e pedidos de atualização podem ser enviados pelo canal institucional do site.
+          Em temas que envolvem decisão individual, confirme as informações nas fontes oficiais e procure profissionais habilitados quando necessário.
         </p>
       </section>
 
