@@ -22,12 +22,32 @@ const staticRoutes: MetadataRoute.Sitemap = [
     priority: 0.6,
   },
   {
+    url: absoluteUrl("/quem-escreve"),
+    changeFrequency: "monthly",
+    priority: 0.6,
+  },
+  {
+    url: absoluteUrl("/contato"),
+    changeFrequency: "monthly",
+    priority: 0.6,
+  },
+  {
     url: absoluteUrl("/politica-editorial"),
     changeFrequency: "monthly",
     priority: 0.5,
   },
   {
     url: absoluteUrl("/politica-de-cookies"),
+    changeFrequency: "monthly",
+    priority: 0.5,
+  },
+  {
+    url: absoluteUrl("/politica-de-privacidade"),
+    changeFrequency: "monthly",
+    priority: 0.5,
+  },
+  {
+    url: absoluteUrl("/termos-de-uso"),
     changeFrequency: "monthly",
     priority: 0.5,
   },
