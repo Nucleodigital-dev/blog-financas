@@ -733,6 +733,26 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
           )}
         </div>
 
+        <aside
+          aria-label="Autoria editorial"
+          style={{
+            marginTop: 56,
+            padding: 24,
+            border: "1px solid var(--border)",
+            borderRadius: 16,
+            background: "var(--card-bg)",
+          }}
+        >
+          <p style={{ margin: "0 0 8px", fontWeight: 800, color: "var(--primary)" }}>AUTORIA EDITORIAL</p>
+          <h2 style={{ fontSize: "1.25rem", margin: "0 0 8px", fontFamily: "var(--font-heading)" }}>
+            Equipe editorial do Grana em Ordem
+          </h2>
+          <p style={{ margin: 0, color: "var(--text-muted)", lineHeight: 1.65 }}>
+            Este conteúdo é educativo e passa por revisão editorial. Em temas de crédito, investimentos, impostos ou regras que mudam com frequência, confirme as informações em fontes oficiais antes de tomar decisões.{" "}
+            <Link href="/quem-escreve">Entenda como produzimos e atualizamos os conteúdos.</Link>
+          </p>
+        </aside>
+
         <hr style={{ margin: "64px 0", borderColor: "var(--border)" }} />
 
         {/* Premium Related Articles */}
