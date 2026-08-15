@@ -120,6 +120,10 @@ export default async function RootLayout({
               ))}
             </div>
             <div className="gold-divider" />
+            <p style={{ maxWidth: 960, fontSize: "0.8125rem", lineHeight: 1.6 }}>
+              O conteúdo é estritamente educacional e não constitui recomendação de investimento ou aconselhamento financeiro. Antes de decisões relevantes, considere sua situação individual e consulte profissionais habilitados.
+              {" "}<Link href="/aviso-legal">Leia o aviso legal.</Link>
+            </p>
             <p>&copy; {new Date().getFullYear()} {settings.title || siteName}. Todos os direitos reservados.</p>
           </div>
         </footer>

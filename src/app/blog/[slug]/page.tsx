@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Calendar, Info, AlertTriangle, CheckCircle2, ChevronRight, BookOpen } from "lucide-react";
 import type { Metadata } from "next";
-import { marked } from "marked";
 import Image from "next/image";
 import { absoluteUrl, organizationName, siteName, siteUrl } from "@/lib/site";
 import { formatArticleTitle } from "@/lib/text";
@@ -10,6 +9,7 @@ import { getArticleBySlug, getRelatedArticles } from "@/lib/content";
 import { getArticleSupplement } from "@/lib/article-supplements";
 import { ArticleEngagement } from "@/components/ArticleEngagement";
 import FinanceTool from "@/components/FinanceTools";
+import { renderSafeMarkdown } from "@/lib/safe-markdown";
 
 export const dynamic = "force-dynamic";
 
@@ -97,7 +97,7 @@ function getReferenceLines(blocks: ArticleBlock[]) {
 }
 
 function renderMarkdown(value: string | null | undefined) {
-  return marked(value || "") as string;
+  return renderSafeMarkdown(value);
 }
 
 const englishUnavailableContent = `## English version coming soon
@@ -569,7 +569,7 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
             </div>
             <div
               dangerouslySetInnerHTML={{
-                __html: quickAnswerBlock.isHtml ? quickAnswerBlock.content || "" : renderMarkdown(quickAnswerBlock.content),
+                __html: renderMarkdown(quickAnswerBlock.content),
               }}
               style={{ fontSize: "1.25rem", lineHeight: 1.8 }}
             />
@@ -640,7 +640,7 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
                       <div
                         className={`block-${block.type}`}
                         dangerouslySetInnerHTML={{
-                          __html: block.isHtml ? block.content || "" : renderMarkdown(block.content),
+                          __html: renderMarkdown(block.content),
                         }}
                       />
                     </div>
@@ -669,7 +669,7 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
                       <div
                         className={`block-${block.type}`}
                         dangerouslySetInnerHTML={{
-                          __html: block.isHtml ? block.content || "" : renderMarkdown(block.content),
+                          __html: renderMarkdown(block.content),
                         }}
                       />
                     </div>
@@ -723,7 +723,7 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
                     <div
                       className={`block-${block.type}`}
                       dangerouslySetInnerHTML={{
-                        __html: block.isHtml ? block.content || "" : renderMarkdown(block.content),
+                        __html: renderMarkdown(block.content),
                       }}
                     />
                   </div>
@@ -734,7 +734,7 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
         </div>
 
         <aside
-          aria-label="Autoria editorial"
+          aria-label="Autoria editorial e aviso financeiro"
           style={{
             marginTop: 56,
             padding: 24,
@@ -748,7 +748,7 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
             Equipe editorial do Grana em Ordem
           </h2>
           <p style={{ margin: 0, color: "var(--text-muted)", lineHeight: 1.65 }}>
-            Este conteúdo é educativo e passa por revisão editorial. Em temas de crédito, investimentos, impostos ou regras que mudam com frequência, confirme as informações em fontes oficiais antes de tomar decisões.{" "}
+            Este conteúdo é estritamente educacional e não constitui recomendação de investimento ou aconselhamento financeiro. Ele passa por revisão editorial, mas, em temas de crédito, investimentos, impostos ou regras que mudam com frequência, confirme as informações em fontes oficiais antes de tomar decisões.{" "}
             <Link href="/quem-escreve">Entenda como produzimos e atualizamos os conteúdos.</Link>
           </p>
         </aside>

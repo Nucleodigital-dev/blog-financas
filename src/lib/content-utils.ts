@@ -1,5 +1,5 @@
-import { marked } from "marked";
 import type { ArticleBlock, ArticleContent } from "./content-types";
+import { renderSafeMarkdown } from "./safe-markdown";
 
 export function stripMarkup(value: string) {
   return value
@@ -57,5 +57,5 @@ export function getContentExcerpt(content: ArticleContent, length = 150) {
 }
 
 export function contentToHtml(content: ArticleContent) {
-  return typeof content === "string" ? marked(content) : "";
+  return typeof content === "string" ? renderSafeMarkdown(content) : "";
 }
