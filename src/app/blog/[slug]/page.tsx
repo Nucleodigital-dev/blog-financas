@@ -292,9 +292,10 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
   const isJsonBlocks = originalBlocks.length > 0;
   const legacyHtml = !isJsonBlocks && typeof contentRaw === "string" ? renderMarkdown(contentRaw) : "";
 
-  // Extrai o Quick Answer para o "Resumo" do artigo, se existir
+  // Mantém uma chamada curta no hero e a resposta completa no resumo.
   const quickAnswerBlock = blocksArray.find((b) => b.type === "quick_answer");
-  const otherBlocks = blocksArray.filter((b) => b.type !== "quick_answer");
+  const heroDekBlock = blocksArray.find((b) => b.type === "hero_dek");
+  const otherBlocks = blocksArray.filter((b) => b.type !== "quick_answer" && b.type !== "hero_dek");
 
   const related = await getRelatedArticles(article.id, article.category_id);
 
@@ -544,9 +545,9 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
             {title}
           </h1>
 
-          {quickAnswerBlock && (
+          {(heroDekBlock || quickAnswerBlock) && (
             <p style={{ fontSize: "1.25rem", color: "var(--text-muted)", lineHeight: 1.6, marginBottom: 32 }}>
-              {getHeroExcerpt(quickAnswerBlock.content)}
+              {heroDekBlock?.content || getHeroExcerpt(quickAnswerBlock?.content)}
             </p>
           )}
         </div>
