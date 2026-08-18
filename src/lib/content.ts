@@ -74,6 +74,7 @@ export async function getAllArticles(): Promise<Article[]> {
         "id, slug, title_pt, title_en, seo_description, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at"
       )
       .eq("status", "published")
+      .lte("published_at", new Date().toISOString())
       .order("created_at", { ascending: false });
     if (error) throw error;
     return withCategories(data || []);
@@ -95,6 +96,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
       )
       .eq("slug", slug)
       .eq("status", "published")
+      .lte("published_at", new Date().toISOString())
       .single();
     if (error) throw error;
     const [article] = await withCategories(data ? [data] : []);

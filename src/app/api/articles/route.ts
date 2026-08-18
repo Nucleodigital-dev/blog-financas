@@ -1,17 +1,16 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
-import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';
+import { requireAdminUser } from '@/lib/admin-auth';
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
+    const { supabase, user } = await requireAdminUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { data: articles, error } = await supabase
       .from('articles')
-      .select('id, slug, title_pt, title_en, cover_image, cover_alt, category_id, is_featured, created_at')
+      .select('id, slug, title_pt, title_en, cover_image, cover_alt, category_id, is_featured, status, published_at, approved_at, created_at')
       .order('created_at', { ascending: false });
       
     if (error) throw error;
@@ -23,10 +22,12 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
+    const { supabase, user } = await requireAdminUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const body = await request.json();
-    const { title_pt, content_pt, title_en, content_en, seo_description, slug, cover_image, cover_alt, category_id, is_featured, status } = body;
+    const { title_pt, content_pt, title_en, content_en, seo_description, slug, cover_image, cover_alt, category_id, is_featured, status, published_at } = body;
+    const nextStatus = status === 'scheduled' ? 'scheduled' : status === 'published' ? 'published' : 'draft';
+    if (nextStatus === 'scheduled' && (!published_at || Number.isNaN(Date.parse(published_at)))) return NextResponse.json({ error: 'Valid publication date is required' }, { status: 400 });
     
     if (!title_pt || !content_pt || !slug) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -45,7 +46,9 @@ export async function POST(request: Request) {
       cover_alt: cover_alt || '',
       category_id: category_id || null,
       is_featured: is_featured ? true : false,
-      status: status || 'published'
+      status: nextStatus,
+      published_at: nextStatus === 'published' ? new Date().toISOString() : published_at || null,
+      approved_at: nextStatus === 'scheduled' ? new Date().toISOString() : null
     });
     
     if (error) {

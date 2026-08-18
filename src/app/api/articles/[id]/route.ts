@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
-import { cookies } from 'next/headers';
+import { requireAdminUser } from '@/lib/admin-auth';
 
 export const dynamic = "force-dynamic";
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
+    const { supabase, user } = await requireAdminUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { id } = await params;
     
     if (!id) {
@@ -16,7 +15,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
     const { data: article, error } = await supabase
       .from('articles')
-      .select('id, slug, title_pt, content_pt, title_en, content_en, seo_description, cover_image, cover_alt, category_id, is_featured, status, created_at')
+      .select('id, slug, title_pt, content_pt, title_en, content_en, seo_description, cover_image, cover_alt, category_id, is_featured, status, published_at, approved_at, created_at')
       .eq('id', id)
       .single();
 
@@ -33,11 +32,13 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
+    const { supabase, user } = await requireAdminUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { id } = await params;
     const body = await request.json();
-    const { title_pt, content_pt, title_en, content_en, seo_description, slug, cover_image, cover_alt, category_id, is_featured, status } = body;
+    const { title_pt, content_pt, title_en, content_en, seo_description, slug, cover_image, cover_alt, category_id, is_featured, status, published_at } = body;
+    const nextStatus = status === 'scheduled' ? 'scheduled' : status === 'published' ? 'published' : 'draft';
+    if (nextStatus === 'scheduled' && (!published_at || Number.isNaN(Date.parse(published_at)))) return NextResponse.json({ error: 'Valid publication date is required' }, { status: 400 });
     
     if (!id) {
       return NextResponse.json({ error: 'Article ID is required' }, { status: 400 });
@@ -60,7 +61,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         cover_alt: cover_alt || '',
         category_id: category_id || null,
         is_featured: is_featured ? true : false,
-        status: status || 'published'
+        status: nextStatus,
+        published_at: nextStatus === 'published' ? new Date().toISOString() : published_at || null,
+        approved_at: nextStatus === 'scheduled' ? new Date().toISOString() : null
       })
       .eq('id', id);
 
@@ -81,8 +84,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function DELETE(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
+    const { supabase, user } = await requireAdminUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const resolvedParams = await params;
     const { id } = resolvedParams;
     

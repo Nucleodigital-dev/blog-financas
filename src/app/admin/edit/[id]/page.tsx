@@ -22,7 +22,8 @@ type Article = {
   cover_alt: string;
   category_id: string;
   is_featured: number | boolean;
-  status: "draft" | "published";
+  status: "draft" | "scheduled" | "published";
+  published_at?: string | null;
 };
 
 type FaqItem = {
@@ -171,7 +172,7 @@ export default function EditArticlePage() {
     }
   };
 
-  const saveArticle = async (status?: "draft" | "published") => {
+  const saveArticle = async (status?: "draft" | "scheduled" | "published") => {
     if (!article) return;
     if (!article.title_pt.trim()) return alert("Informe o título.");
     if (!article.slug.trim()) return alert("Informe o slug.");
@@ -238,6 +239,8 @@ export default function EditArticlePage() {
           <button className="btn btn-secondary" onClick={() => saveArticle("draft")} disabled={saving}>
             {saving ? <Loader2 size={18} /> : <Save size={18} />} Salvar rascunho
           </button>
+          <input type="datetime-local" value={article?.published_at ? new Date(article.published_at).toISOString().slice(0, 16) : ""} onChange={e => updateArticle("published_at", e.target.value ? new Date(e.target.value).toISOString() : "")} aria-label="Data e hora da publicação" />
+          <button className="btn btn-secondary" onClick={() => saveArticle("scheduled")} disabled={saving || !article?.published_at}>Agendar</button>
           <button className="btn btn-primary" onClick={() => saveArticle("published")} disabled={saving}>
             {saving ? <Loader2 size={18} /> : <Save size={18} />} Publicar
           </button>

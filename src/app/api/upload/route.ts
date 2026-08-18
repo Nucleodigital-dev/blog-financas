@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import path from 'path';
-import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import { requireAdminUser } from '@/lib/admin-auth';
 
 const MAX_UPLOAD_SIZE = 5 * 1024 * 1024;
 const ALLOWED_TYPES = new Map([
@@ -12,6 +11,8 @@ const ALLOWED_TYPES = new Map([
 
 export async function POST(request: Request) {
   try {
+    const { supabase, user } = await requireAdminUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const formData = await request.formData();
     const file = formData.get('file') as File;
     
@@ -28,19 +29,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Only JPEG, PNG and WebP images are allowed' }, { status: 415 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    
     const fileName = `${uuidv4()}${ext}`;
-    
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-    
-    const filePath = path.join(uploadDir, fileName);
-    fs.writeFileSync(filePath, buffer);
-    
-    const url = `/uploads/${fileName}`;
+    const filePath = `${user.id}/${fileName}`;
+    const { error } = await supabase.storage.from('article-images').upload(filePath, file, { contentType: file.type, upsert: false });
+    if (error) throw error;
+    const { data } = supabase.storage.from('article-images').getPublicUrl(filePath);
+    const url = data.publicUrl;
     
     return NextResponse.json({ url });
   } catch (error) {

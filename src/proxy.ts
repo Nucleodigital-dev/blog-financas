@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 
 export async function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname === '/api/cron/publish') return NextResponse.next()
   // refresh user sessions and protect /admin
   return await updateSession(request)
 }

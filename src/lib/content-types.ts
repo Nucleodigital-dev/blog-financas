@@ -43,6 +43,8 @@ export type Article = {
   is_featured?: boolean | number | null;
   status?: string | null;
   created_at?: string | null;
+  published_at?: string | null;
+  approved_at?: string | null;
 };
 
 export type SitemapArticle = {

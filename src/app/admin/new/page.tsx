@@ -51,7 +51,8 @@ export default function SmartEditor() {
     template_id: "",
     seo_description: "",
     cover_image: "",
-    is_featured: false
+    is_featured: false,
+    published_at: ""
   });
 
   const [activeBlocks, setActiveBlocks] = useState<any[]>([]);
@@ -155,10 +156,11 @@ export default function SmartEditor() {
     setCurrentBlockIndex(prev => prev + 1);
   };
 
-  const saveArticle = async (status: 'draft' | 'published') => {
-    if (status === 'published' && !formData.cover_image) {
+  const saveArticle = async (status: 'draft' | 'scheduled' | 'published') => {
+    if (status !== 'draft' && !formData.cover_image) {
       return alert("A Imagem de Capa é OBRIGATÓRIA para publicar o artigo.");
     }
+    if (status === 'scheduled' && !formData.published_at) return alert("Informe a data e hora da publicação.");
     
     setSaving(true);
     try {
@@ -188,7 +190,8 @@ export default function SmartEditor() {
         content_pt: JSON.stringify(buildBlocks(false)),
         title_en: formData.title_en || formData.title_pt,
         content_en: JSON.stringify(buildBlocks(true)),
-        status
+        status,
+        published_at: formData.published_at ? new Date(formData.published_at).toISOString() : null
       };
 
       const res = await fetch('/api/articles', {
@@ -465,6 +468,8 @@ export default function SmartEditor() {
                 <button onClick={() => saveArticle('draft')} disabled={saving} className="btn btn-secondary">
                   Salvar Rascunho
                 </button>
+                <input type="datetime-local" value={formData.published_at} onChange={e => setFormData({...formData, published_at: e.target.value})} aria-label="Data e hora da publicação" />
+                <button onClick={() => saveArticle('scheduled')} disabled={saving || !formData.published_at} className="btn btn-secondary">Agendar</button>
                 <button onClick={() => saveArticle('published')} disabled={saving} className="btn btn-primary">
                   {saving ? <Loader2 className="animate-spin" size={20} /> : <Save size={20} />} Publicar
                 </button>
