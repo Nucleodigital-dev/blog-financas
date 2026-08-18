@@ -19,9 +19,51 @@ export default function FinanceTool({ slug }: ToolProps) {
       return <FireSimulator />;
     case "comparador-renda-fixa":
       return <FixedIncomeComparator />;
+    case "financas-pessoais-como-organizar-seu-dinheiro":
+      return <Budget503020Calculator />;
     default:
       return null;
   }
+}
+
+function Budget503020Calculator() {
+  const [income, setIncome] = useState(3000);
+  const formatBRL = (value: number) => new Intl.NumberFormat("pt-BR", {
+    style: "currency", currency: "BRL", maximumFractionDigits: 0,
+  }).format(value);
+
+  const groups = [
+    { label: "Necessidades", percentage: 50, description: "Moradia, alimentação, transporte, saúde e contas essenciais." },
+    { label: "Desejos", percentage: 30, description: "Lazer, assinaturas, refeições fora e compras não essenciais." },
+    { label: "Objetivos financeiros", percentage: 20, description: "Reserva de emergência, quitação de dívidas e investimentos." },
+  ];
+
+  return (
+    <section style={styles.card} aria-labelledby="calculadora-50-30-20">
+      <div style={styles.header}>
+        <DollarSign size={24} style={{ color: "var(--primary)" }} />
+        <h3 id="calculadora-50-30-20" style={styles.title}>Calculadora de orçamento 50-30-20</h3>
+      </div>
+      <p style={styles.description}>Use sua renda líquida mensal para visualizar uma referência simples de distribuição. Adapte os percentuais à sua realidade, especialmente se tiver dívidas ou gastos essenciais elevados.</p>
+      <div style={{ ...styles.inputContainer, maxWidth: 360 }}>
+        <label style={styles.label} htmlFor="renda-liquida">Renda líquida mensal (R$)</label>
+        <div style={styles.inputWrapper}>
+          <DollarSign size={16} style={styles.inputIcon} />
+          <input id="renda-liquida" type="number" min="0" value={income} onChange={(event) => setIncome(Math.max(0, Number(event.target.value)))} style={styles.input} />
+        </div>
+      </div>
+      <div style={{ ...styles.subResults, marginTop: 24 }}>
+        {groups.map((group) => (
+          <div key={group.label} style={styles.resultItem}>
+            <span style={styles.resultLabel}>{group.label} — {group.percentage}%</span>
+            <strong style={{ ...styles.resultValue, color: "var(--primary)" }}>{formatBRL(income * group.percentage / 100)}</strong>
+            <span style={styles.resultSubtitle}>{group.description}</span>
+          </div>
+        ))}
+      </div>
+      <p style={{ ...styles.hint, marginTop: 20 }}>Esta calculadora é educativa e não substitui planejamento financeiro individual.</p>
+    </section>
+  );
 }
 
 // 1. CALCULADORA DE JUROS COMPOSTOS
