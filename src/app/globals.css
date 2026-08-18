@@ -803,6 +803,16 @@ select {
   margin-bottom: 20px;
 }
 
+/* Imagens inseridas pelo Markdown do artigo: centralizadas e responsivas. */
+.article-content img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin: 32px auto;
+  border-radius: 16px;
+}
+
 .article-content ul, .article-content ol {
   padding-left: 24px;
   margin-bottom: 20px;
