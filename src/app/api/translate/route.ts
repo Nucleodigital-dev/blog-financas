@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
+import { requireAdminUser } from '@/lib/admin-auth';
 
 export async function POST(request: Request) {
   try {
+    const { user } = await requireAdminUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { text, targetLang } = await request.json();
 
     if (!text) {
