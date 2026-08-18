@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/utils/supabase/server';
-import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';
+import { requireAdminUser } from '@/lib/admin-auth';
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
+    const { supabase, user } = await requireAdminUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { data: categories, error } = await supabase.from('categories').select('*');
     if (error) throw error;
     return NextResponse.json({ categories });
@@ -19,8 +18,8 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
+    const { supabase, user } = await requireAdminUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const body = await request.json();
     const { name_pt, name_en, slug, parent_id, config_json } = body;
     
@@ -55,8 +54,8 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
+    const { supabase, user } = await requireAdminUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     
