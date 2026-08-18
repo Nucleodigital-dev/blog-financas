@@ -195,7 +195,7 @@ export async function generateMetadata({ params, searchParams }: BlogPostProps):
   const hasEnglish = hasUsableEnglish(article);
   const title = getLocalizedTitle(article, isEn, hasEnglish);
   const content = getLocalizedContent(article, isEn, hasEnglish);
-  const description = getMetaDescription(getContentForMetadata(content, article.slug));
+  const description = article.seo_description || getMetaDescription(getContentForMetadata(content, article.slug));
   const canonicalPath = `/blog/${article.slug}`;
   const image = getArticleImage(article.cover_image);
 
@@ -440,6 +440,11 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
         .block-references ol:last-child {
           margin-bottom: 0;
         }
+
+        .article-cta a {
+          color: inherit;
+          font-weight: 800;
+        }
         
         .faq-details {
           background: var(--card-bg);
@@ -673,6 +678,31 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
                         }}
                       />
                     </div>
+                  );
+                }
+
+                if (block.type === "cta") {
+                  return (
+                    <aside
+                      key={i}
+                      id={sectionId}
+                      className="article-cta"
+                      aria-label="Próximo passo recomendado"
+                      style={{
+                        background: "linear-gradient(135deg, rgba(201, 162, 72, 0.14), var(--card-bg))",
+                        border: "1px solid rgba(201, 162, 72, 0.38)",
+                        padding: 32,
+                        borderRadius: 16,
+                        color: "var(--foreground)",
+                        marginBottom: 48,
+                      }}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16, color: "var(--primary)" }}>
+                        <CheckCircle2 size={26} />
+                        <h2 style={{ fontSize: "1.5rem", margin: 0, fontFamily: "var(--font-heading)", color: "var(--foreground)" }}>{block.title}</h2>
+                      </div>
+                      <div dangerouslySetInnerHTML={{ __html: renderMarkdown(block.content) }} />
+                    </aside>
                   );
                 }
 

@@ -16,7 +16,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
     const { data: article, error } = await supabase
       .from('articles')
-      .select('id, slug, title_pt, content_pt, title_en, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at')
+      .select('id, slug, title_pt, content_pt, title_en, content_en, seo_description, cover_image, cover_alt, category_id, is_featured, status, created_at')
       .eq('id', id)
       .single();
 
@@ -37,7 +37,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const supabase = createClient(cookieStore);
     const { id } = await params;
     const body = await request.json();
-    const { title_pt, content_pt, title_en, content_en, slug, cover_image, cover_alt, category_id, is_featured, status } = body;
+    const { title_pt, content_pt, title_en, content_en, seo_description, slug, cover_image, cover_alt, category_id, is_featured, status } = body;
     
     if (!id) {
       return NextResponse.json({ error: 'Article ID is required' }, { status: 400 });
@@ -55,6 +55,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         content_pt,
         title_en: title_en || '',
         content_en: content_en || '',
+        seo_description: seo_description || null,
         cover_image: cover_image || '',
         cover_alt: cover_alt || '',
         category_id: category_id || null,

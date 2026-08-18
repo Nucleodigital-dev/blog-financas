@@ -71,7 +71,7 @@ export async function getAllArticles(): Promise<Article[]> {
     const { data, error } = await supabase
       .from("articles")
       .select(
-        "id, slug, title_pt, title_en, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at"
+        "id, slug, title_pt, title_en, seo_description, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at"
       )
       .eq("status", "published")
       .order("created_at", { ascending: false });
@@ -91,7 +91,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
     const { data, error } = await supabase
       .from("articles")
       .select(
-        "id, slug, title_pt, title_en, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at"
+        "id, slug, title_pt, title_en, seo_description, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at"
       )
       .eq("slug", slug)
       .eq("status", "published")
@@ -113,7 +113,7 @@ export async function getRelatedArticles(articleId: string, categoryId?: string 
     let query = supabase
       .from("articles")
       .select(
-        "id, slug, title_pt, title_en, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at"
+        "id, slug, title_pt, title_en, seo_description, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at"
       )
       .eq("status", "published")
       .neq("id", articleId)
@@ -131,7 +131,7 @@ export async function getRelatedArticles(articleId: string, categoryId?: string 
     const { data: latest, error: latestError } = await supabase
       .from("articles")
       .select(
-        "id, slug, title_pt, title_en, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at"
+        "id, slug, title_pt, title_en, seo_description, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at"
       )
       .eq("status", "published")
       .neq("id", articleId)

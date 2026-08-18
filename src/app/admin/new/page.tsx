@@ -12,6 +12,7 @@ const BLOCKS_DB: Record<string, any> = {
   who_is_for: { id: "who_is_for", name: "Para quem serve", question: "Para quem este artigo foi escrito?", placeholder: "Para pessoas que querem começar a economizar...", minLength: 30 },
   concepts: { id: "concepts", name: "Conceitos essenciais", question: "Quais são os termos e conceitos que o leitor precisa entender?", placeholder: "Juros compostos: a fórmula que transforma pequenas economias...", minLength: 80 },
   step_by_step: { id: "step_by_step", name: "Passo a passo prático", question: "Descreva o passo a passo que o leitor deve seguir.", placeholder: "1. Mapeie todas as suas despesas...\n2. Defina sua reserva de emergência...", minLength: 100 },
+  cta: { id: "cta", name: "Próximo passo", question: "Indique uma ação útil e educativa, com link interno relevante quando houver um artigo já publicado.", placeholder: "Explore nosso guia sobre reserva de emergência para continuar o seu planejamento.", minLength: 40 },
   risks: { id: "risks", name: "Riscos e pontos de atenção", question: "Quais os principais riscos e o que o leitor deve evitar?", placeholder: "Evite aplicar dinheiro da reserva de emergência em...", minLength: 50 },
   comparison_table: { id: "comparison_table", name: "Comparativo / Tabela", question: "Compare as opções ou crie uma tabela de referência.", placeholder: "CDB: Liquidez diária — CDI: Mais rentabilidade — LCI: Isento de IR...", minLength: 80 },
   legal_notice: { id: "legal_notice", name: "Aviso legal", question: "Inclua o aviso educativo padrão para conteúdo de finanças.", placeholder: "As informações neste artigo têm caráter exclusivamente educativo...", minLength: 40 },
@@ -22,7 +23,7 @@ const BLOCKS_DB: Record<string, any> = {
 const TEMPLATES_DB: Record<string, any> = {
   guide: {
     name: "Guia Prático de Finanças",
-    required: ["intro", "quick_answer", "who_is_for", "concepts", "step_by_step", "risks", "faq", "references"],
+    required: ["intro", "quick_answer", "who_is_for", "concepts", "step_by_step", "cta", "risks", "faq", "references"],
     optional: ["comparison_table", "legal_notice"]
   },
   comparison: {
@@ -32,7 +33,7 @@ const TEMPLATES_DB: Record<string, any> = {
   },
   budgeting: {
     name: "Organização e Orçamento",
-    required: ["intro", "quick_answer", "who_is_for", "step_by_step", "faq", "references"],
+    required: ["intro", "quick_answer", "who_is_for", "step_by_step", "cta", "faq", "references"],
     optional: ["comparison_table", "risks", "legal_notice"]
   },
 };
@@ -48,6 +49,7 @@ export default function SmartEditor() {
     slug: "",
     category_id: "",
     template_id: "",
+    seo_description: "",
     cover_image: "",
     is_featured: false
   });
@@ -182,6 +184,7 @@ export default function SmartEditor() {
         category_id: formData.category_id,
         cover_image: formData.cover_image,
         is_featured: formData.is_featured,
+        seo_description: formData.seo_description,
         content_pt: JSON.stringify(buildBlocks(false)),
         title_en: formData.title_en || formData.title_pt,
         content_en: JSON.stringify(buildBlocks(true)),
@@ -233,6 +236,11 @@ export default function SmartEditor() {
           <div className="form-group">
             <label>Título em Inglês (Opcional)</label>
             <input value={formData.title_en} onChange={e => setFormData({...formData, title_en: e.target.value})} placeholder="Ex: How to build an emergency fund from scratch" />
+          </div>
+
+          <div className="form-group">
+            <label>Meta description (SEO)</label>
+            <textarea value={formData.seo_description} onChange={e => setFormData({...formData, seo_description: e.target.value})} placeholder="Resumo único do artigo para os resultados de busca (ideal: até 155 caracteres)." style={{ minHeight: 88 }} />
           </div>
           
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>

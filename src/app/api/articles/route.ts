@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     const cookieStore = await cookies();
     const supabase = createClient(cookieStore);
     const body = await request.json();
-    const { title_pt, content_pt, title_en, content_en, slug, cover_image, cover_alt, category_id, is_featured, status } = body;
+    const { title_pt, content_pt, title_en, content_en, seo_description, slug, cover_image, cover_alt, category_id, is_featured, status } = body;
     
     if (!title_pt || !content_pt || !slug) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -39,6 +39,7 @@ export async function POST(request: Request) {
       title_pt,
       content_pt,
       title_en: title_en || '',
+      seo_description: seo_description || null,
       content_en: content_en || '',
       cover_image: cover_image || '',
       cover_alt: cover_alt || '',

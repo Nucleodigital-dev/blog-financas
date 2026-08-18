@@ -26,6 +26,7 @@ export type Article = {
   slug: string;
   title_pt: string;
   title_en?: string | null;
+  seo_description?: string | null;
   content_pt?: ArticleContent;
   content_en?: ArticleContent;
   cover_image?: string | null;
