@@ -41,6 +41,18 @@ function stripMarkup(value: string) {
     .trim();
 }
 
+function getHeroExcerpt(value: string | null | undefined) {
+  const text = stripMarkup(value || "");
+  if (!text) return "";
+
+  const firstSentence = text.match(/^.+?[.!?](?=\s|$)/)?.[0] || text;
+  const maxLength = 150;
+  if (firstSentence.length <= maxLength) return firstSentence;
+
+  const shortened = firstSentence.slice(0, maxLength).replace(/\s+\S*$/, "").trim();
+  return `${shortened}…`;
+}
+
 function parseBlocks(content: ArticleContent): ArticleBlock[] {
   if (Array.isArray(content)) return content;
   if (!content || typeof content !== "string" || !content.trim().startsWith("[")) return [];
@@ -534,7 +546,7 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
 
           {quickAnswerBlock && (
             <p style={{ fontSize: "1.25rem", color: "var(--text-muted)", lineHeight: 1.6, marginBottom: 32 }}>
-              {(quickAnswerBlock.content || "").replace(/<[^>]*>?/gm, "").substring(0, 200)}...
+              {getHeroExcerpt(quickAnswerBlock.content)}
             </p>
           )}
         </div>
