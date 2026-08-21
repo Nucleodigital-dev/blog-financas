@@ -921,8 +921,8 @@ function FixedIncomeComparator() {
         </div>
 
         <div style={styles.alertBox}>
-          <h5 style={{ margin: "0 0 6px 0", color: "var(--primary)", fontWeight: 700 }}>Conclusão Inteligente</h5>
-          Investindo em CDB 100% do CDI ou Tesouro Selic, você ganha aproximadamente <strong>{formatBRL(results.cdb - results.poupanca)} a mais</strong> em comparação à poupança tradicional neste prazo, mantendo a mesma segurança e liquidez!
+          <h5 style={{ margin: "0 0 6px 0", color: "var(--primary)", fontWeight: 700 }}>Leitura da simulação</h5>
+          Neste cenário ilustrativo, o CDB termina com aproximadamente <strong>{formatBRL(results.cdb - results.poupanca)} a mais</strong> que a poupança. Isso não torna os produtos equivalentes: emissor, risco, liquidez, tributação, custos e garantias devem ser comparados separadamente. Confira as taxas e condições vigentes antes de investir.
         </div>
       </div>
     </div>
