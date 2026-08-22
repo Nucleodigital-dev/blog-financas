@@ -21,9 +21,55 @@ export default function FinanceTool({ slug }: ToolProps) {
       return <FixedIncomeComparator />;
     case "financas-pessoais-como-organizar-seu-dinheiro":
       return <Budget503020Calculator />;
+    case "planejador-reserva-impostos":
+      return <TaxReservePlanner />;
     default:
       return null;
   }
+}
+
+function TaxReservePlanner() {
+  const [estimatedAnnualAmount, setEstimatedAnnualAmount] = useState(2400);
+  const [monthsUntilPayment, setMonthsUntilPayment] = useState(12);
+  const safeMonths = Math.max(1, monthsUntilPayment);
+  const monthlyReserve = estimatedAnnualAmount / safeMonths;
+  const formatBRL = (value: number) => new Intl.NumberFormat("pt-BR", {
+    style: "currency", currency: "BRL", maximumFractionDigits: 2,
+  }).format(value);
+
+  return (
+    <section style={styles.card} aria-labelledby="planejador-reserva-impostos">
+      <div style={styles.header}>
+        <Calendar size={24} style={{ color: "var(--primary)" }} />
+        <h3 id="planejador-reserva-impostos" style={styles.title}>Planejador de reserva para impostos</h3>
+      </div>
+      <p style={styles.description}>Informe uma estimativa própria do total que pretende reservar e o número de meses disponíveis. A ferramenta apenas divide o valor para ajudar no planejamento; ela não calcula imposto devido.</p>
+      <div style={styles.grid}>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="estimativa-anual-impostos">Estimativa total a reservar (R$)</label>
+          <div style={styles.inputWrapper}>
+            <DollarSign size={16} style={styles.inputIcon} />
+            <input id="estimativa-anual-impostos" type="number" min="0" value={estimatedAnnualAmount} onChange={(event) => setEstimatedAnnualAmount(Math.max(0, Number(event.target.value)))} style={styles.input} />
+          </div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="meses-para-pagamento">Meses até o pagamento</label>
+          <div style={styles.inputWrapper}>
+            <Calendar size={16} style={styles.inputIcon} />
+            <input id="meses-para-pagamento" type="number" min="1" max="60" value={monthsUntilPayment} onChange={(event) => setMonthsUntilPayment(Math.min(60, Math.max(1, Number(event.target.value))))} style={styles.input} />
+          </div>
+        </div>
+      </div>
+      <div style={styles.resultsBlock}>
+        <div style={styles.resultItemBig}>
+          <span style={styles.resultLabel}>Reserva mensal planejada</span>
+          <span style={styles.resultValueBig}>{formatBRL(monthlyReserve)}</span>
+          <span style={styles.resultSubtitle}>{formatBRL(estimatedAnnualAmount)} distribuídos por {safeMonths} {safeMonths === 1 ? "mês" : "meses"}.</span>
+        </div>
+      </div>
+      <p style={{ ...styles.hint, marginTop: 20 }}>Resultado educativo. Confirme obrigação, base de cálculo, alíquotas, prazos e formas de pagamento nos canais oficiais da Receita Federal ou com profissional habilitado.</p>
+    </section>
+  );
 }
 
 function Budget503020Calculator() {
@@ -1210,3 +1256,4 @@ const styles: { [key: string]: React.CSSProperties } = {
     lineHeight: 1,
   },
 };
+
