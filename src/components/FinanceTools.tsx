@@ -23,9 +23,62 @@ export default function FinanceTool({ slug }: ToolProps) {
       return <Budget503020Calculator />;
     case "planejador-reserva-impostos":
       return <TaxReservePlanner />;
+    case "orcamento-apertado-priorizar-gastos":
+      return <BudgetGapCalculator />;
     default:
       return null;
   }
+}
+
+function BudgetGapCalculator() {
+  const [income, setIncome] = useState(4200);
+  const [essentialExpenses, setEssentialExpenses] = useState(3300);
+  const [otherExpenses, setOtherExpenses] = useState(1350);
+  const balance = income - essentialExpenses - otherExpenses;
+  const formatBRL = (value: number) => new Intl.NumberFormat("pt-BR", {
+    style: "currency", currency: "BRL", maximumFractionDigits: 2,
+  }).format(value);
+
+  return (
+    <section style={styles.card} aria-labelledby="calculadora-ajuste-orcamento">
+      <div style={styles.header}>
+        <DollarSign size={24} style={{ color: "var(--primary)" }} />
+        <h3 id="calculadora-ajuste-orcamento" style={styles.title}>Calculadora de ajuste do orçamento</h3>
+      </div>
+      <p style={styles.description}>Informe a renda líquida e as despesas do cenário que deseja testar. Altere um valor por vez para visualizar o tamanho do ajuste necessário.</p>
+      <div style={styles.grid}>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="renda-orcamento-apertado">Renda líquida (R$)</label>
+          <div style={styles.inputWrapper}>
+            <DollarSign size={16} style={styles.inputIcon} />
+            <input id="renda-orcamento-apertado" type="number" min="0" value={income} onChange={(event) => setIncome(Math.max(0, Number(event.target.value)))} style={styles.input} />
+          </div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="despesas-essenciais">Despesas essenciais (R$)</label>
+          <div style={styles.inputWrapper}>
+            <DollarSign size={16} style={styles.inputIcon} />
+            <input id="despesas-essenciais" type="number" min="0" value={essentialExpenses} onChange={(event) => setEssentialExpenses(Math.max(0, Number(event.target.value)))} style={styles.input} />
+          </div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="outras-despesas">Outras despesas e parcelas (R$)</label>
+          <div style={styles.inputWrapper}>
+            <DollarSign size={16} style={styles.inputIcon} />
+            <input id="outras-despesas" type="number" min="0" value={otherExpenses} onChange={(event) => setOtherExpenses(Math.max(0, Number(event.target.value)))} style={styles.input} />
+          </div>
+        </div>
+      </div>
+      <div style={styles.resultsBlock}>
+        <div style={styles.resultItemBig}>
+          <span style={styles.resultLabel}>{balance >= 0 ? "Saldo estimado" : "Ajuste ainda necessário"}</span>
+          <span style={{ ...styles.resultValueBig, color: balance >= 0 ? "var(--primary)" : "#ef4444" }}>{formatBRL(Math.abs(balance))}</span>
+          <span style={styles.resultSubtitle}>{balance >= 0 ? "O cenário termina sem déficit." : "Reduza, adie ou negocie despesas até que o cenário caiba na renda."}</span>
+        </div>
+      </div>
+      <p style={{ ...styles.hint, marginTop: 20 }}>Resultado educativo. A ferramenta não calcula juros, encargos nem consequências contratuais de atraso.</p>
+    </section>
+  );
 }
 
 function TaxReservePlanner() {
