@@ -25,9 +25,70 @@ export default function FinanceTool({ slug }: ToolProps) {
       return <TaxReservePlanner />;
     case "orcamento-apertado-priorizar-gastos":
       return <BudgetGapCalculator />;
+    case "pacote-bancario-ou-servicos-avulsos":
+      return <BankServicesCostCalculator />;
     default:
       return null;
   }
+}
+
+function BankServicesCostCalculator() {
+  const [packageFee, setPackageFee] = useState(29.9);
+  const [transferQuantity, setTransferQuantity] = useState(3);
+  const [transferFee, setTransferFee] = useState(8);
+  const [withdrawalQuantity, setWithdrawalQuantity] = useState(2);
+  const [withdrawalFee, setWithdrawalFee] = useState(6.5);
+  const [otherFees, setOtherFees] = useState(0);
+  const individualCost = transferQuantity * transferFee + withdrawalQuantity * withdrawalFee + otherFees;
+  const difference = Math.abs(packageFee - individualCost);
+  const packageIsCheaper = packageFee < individualCost;
+  const formatBRL = (value: number) => new Intl.NumberFormat("pt-BR", {
+    style: "currency", currency: "BRL", maximumFractionDigits: 2,
+  }).format(value);
+
+  return (
+    <section style={styles.card} aria-labelledby="comparador-custo-servicos-bancarios">
+      <div style={styles.header}>
+        <DollarSign size={24} style={{ color: "var(--primary)" }} />
+        <h3 id="comparador-custo-servicos-bancarios" style={styles.title}>Comparador de custo bancário mensal</h3>
+      </div>
+      <p style={styles.description}>Informe a tarifa do pacote e os serviços avulsos que realmente usa. Antes de decidir, confira se suas operações já estão incluídas nos serviços essenciais gratuitos e consulte a tabela vigente do banco.</p>
+      <div style={styles.grid}>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="tarifa-pacote-bancario">Tarifa do pacote (R$)</label>
+          <div style={styles.inputWrapper}><DollarSign size={16} style={styles.inputIcon} /><input id="tarifa-pacote-bancario" type="number" min="0" step="0.01" value={packageFee} onChange={(event) => setPackageFee(Math.max(0, Number(event.target.value)))} style={styles.input} /></div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="quantidade-transferencias">Transferências tarifadas no mês</label>
+          <div style={styles.inputWrapper}><input id="quantidade-transferencias" type="number" min="0" value={transferQuantity} onChange={(event) => setTransferQuantity(Math.max(0, Number(event.target.value)))} style={styles.input} /></div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="tarifa-transferencia">Tarifa por transferência (R$)</label>
+          <div style={styles.inputWrapper}><DollarSign size={16} style={styles.inputIcon} /><input id="tarifa-transferencia" type="number" min="0" step="0.01" value={transferFee} onChange={(event) => setTransferFee(Math.max(0, Number(event.target.value)))} style={styles.input} /></div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="quantidade-saques">Saques tarifados no mês</label>
+          <div style={styles.inputWrapper}><input id="quantidade-saques" type="number" min="0" value={withdrawalQuantity} onChange={(event) => setWithdrawalQuantity(Math.max(0, Number(event.target.value)))} style={styles.input} /></div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="tarifa-saque">Tarifa por saque (R$)</label>
+          <div style={styles.inputWrapper}><DollarSign size={16} style={styles.inputIcon} /><input id="tarifa-saque" type="number" min="0" step="0.01" value={withdrawalFee} onChange={(event) => setWithdrawalFee(Math.max(0, Number(event.target.value)))} style={styles.input} /></div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="outras-tarifas-bancarias">Outras tarifas avulsas (R$)</label>
+          <div style={styles.inputWrapper}><DollarSign size={16} style={styles.inputIcon} /><input id="outras-tarifas-bancarias" type="number" min="0" step="0.01" value={otherFees} onChange={(event) => setOtherFees(Math.max(0, Number(event.target.value)))} style={styles.input} /></div>
+        </div>
+      </div>
+      <div style={styles.resultsBlock}>
+        <div style={styles.resultItemBig}>
+          <span style={styles.resultLabel}>Custo avulso estimado</span>
+          <span style={styles.resultValueBig}>{formatBRL(individualCost)}</span>
+          <span style={styles.resultSubtitle}>{packageFee === individualCost ? "Os custos informados são iguais." : packageIsCheaper ? `O pacote informado custa ${formatBRL(difference)} menos no mês.` : `Os serviços avulsos informados custam ${formatBRL(difference)} menos no mês.`}</span>
+        </div>
+      </div>
+      <p style={{ ...styles.hint, marginTop: 20 }}>Estimativa educativa. Não considera gratuidades, limites de quantidade, canais de atendimento, benefícios do pacote nem alterações de tarifas. Confirme as condições diretamente com a instituição.</p>
+    </section>
+  );
 }
 
 function BudgetGapCalculator() {
