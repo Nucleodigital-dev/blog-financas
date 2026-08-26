@@ -597,7 +597,7 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
         <div className="article-content">
           {legacyHtml && <div dangerouslySetInnerHTML={{ __html: legacyHtml }} />}
 
-          {["calculadora-juros-compostos", "simulador-reserva-emergencia", "calculadora-cet", "simulador-independencia-financeira", "comparador-renda-fixa", "financas-pessoais-como-organizar-seu-dinheiro", "planejador-reserva-impostos", "orcamento-apertado-priorizar-gastos", "pacote-bancario-ou-servicos-avulsos"].includes(slug) && (
+          {["calculadora-juros-compostos", "simulador-reserva-emergencia", "calculadora-cet", "simulador-independencia-financeira", "comparador-renda-fixa", "financas-pessoais-como-organizar-seu-dinheiro", "planejador-reserva-impostos", "orcamento-apertado-priorizar-gastos", "pacote-bancario-ou-servicos-avulsos", "renda-variavel-limite-exposicao-risco"].includes(slug) && (
             <FinanceTool slug={slug} />
           )}
 

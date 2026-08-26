@@ -27,9 +27,60 @@ export default function FinanceTool({ slug }: ToolProps) {
       return <BudgetGapCalculator />;
     case "pacote-bancario-ou-servicos-avulsos":
       return <BankServicesCostCalculator />;
+    case "renda-variavel-limite-exposicao-risco":
+      return <VariableIncomeRiskCalculator />;
     default:
       return null;
   }
+}
+
+function VariableIncomeRiskCalculator() {
+  const [totalPortfolio, setTotalPortfolio] = useState(50000);
+  const [variableIncomeShare, setVariableIncomeShare] = useState(20);
+  const [simulatedDrop, setSimulatedDrop] = useState(30);
+  const variableIncomeAmount = totalPortfolio * variableIncomeShare / 100;
+  const estimatedLoss = variableIncomeAmount * simulatedDrop / 100;
+  const remainingPortfolio = Math.max(0, totalPortfolio - estimatedLoss);
+  const totalPortfolioDrop = totalPortfolio > 0 ? estimatedLoss / totalPortfolio * 100 : 0;
+  const formatBRL = (value: number) => new Intl.NumberFormat("pt-BR", {
+    style: "currency", currency: "BRL", maximumFractionDigits: 0,
+  }).format(value);
+
+  return (
+    <section style={styles.card} aria-labelledby="calculadora-exposicao-renda-variavel">
+      <div style={styles.header}>
+        <ShieldAlert size={24} style={{ color: "var(--primary)" }} />
+        <h3 id="calculadora-exposicao-renda-variavel" style={styles.title}>Calculadora de exposição e impacto de queda</h3>
+      </div>
+      <p style={styles.description}>Teste como uma queda hipotética na parcela de renda variável afetaria o patrimônio total. A simulação não prevê retornos e não recomenda um percentual de alocação.</p>
+      <div style={styles.grid}>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="patrimonio-total-renda-variavel">Patrimônio investido total (R$)</label>
+          <div style={styles.inputWrapper}><DollarSign size={16} style={styles.inputIcon} /><input id="patrimonio-total-renda-variavel" type="number" min="0" step="100" value={totalPortfolio} onChange={(event) => setTotalPortfolio(Math.max(0, Number(event.target.value)))} style={styles.input} /></div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="percentual-renda-variavel">Parcela em renda variável (%)</label>
+          <div style={styles.inputWrapper}><Percent size={16} style={styles.inputIcon} /><input id="percentual-renda-variavel" type="number" min="0" max="100" step="1" value={variableIncomeShare} onChange={(event) => setVariableIncomeShare(Math.min(100, Math.max(0, Number(event.target.value))))} style={styles.input} /></div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="queda-simulada-renda-variavel">Queda hipotética nessa parcela (%)</label>
+          <div style={styles.inputWrapper}><TrendingUp size={16} style={styles.inputIcon} /><input id="queda-simulada-renda-variavel" type="number" min="0" max="100" step="1" value={simulatedDrop} onChange={(event) => setSimulatedDrop(Math.min(100, Math.max(0, Number(event.target.value))))} style={styles.input} /></div>
+        </div>
+      </div>
+      <div style={styles.resultsBlock}>
+        <div style={styles.resultItemBig}>
+          <span style={styles.resultLabel}>Perda hipotética no cenário</span>
+          <span style={{ ...styles.resultValueBig, color: estimatedLoss > 0 ? "#ef4444" : "var(--primary)" }}>{formatBRL(estimatedLoss)}</span>
+          <span style={styles.resultSubtitle}>O impacto equivale a {totalPortfolioDrop.toFixed(1).replace(".", ",")}% do patrimônio total.</span>
+        </div>
+        <div style={styles.subResults}>
+          <div style={styles.resultItem}><span style={styles.resultLabel}>Em renda variável</span><strong style={styles.resultValue}>{formatBRL(variableIncomeAmount)}</strong></div>
+          <div style={styles.resultItem}><span style={styles.resultLabel}>Patrimônio após o cenário</span><strong style={styles.resultValue}>{formatBRL(remainingPortfolio)}</strong></div>
+        </div>
+      </div>
+      <p style={{ ...styles.hint, marginTop: 20 }}>Simulação educativa e simplificada. Não considera aportes, recuperação de preços, dividendos, impostos, custos, correlação entre ativos ou perdas superiores ao capital em operações alavancadas.</p>
+    </section>
+  );
 }
 
 function BankServicesCostCalculator() {
