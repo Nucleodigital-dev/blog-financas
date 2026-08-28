@@ -29,9 +29,62 @@ export default function FinanceTool({ slug }: ToolProps) {
       return <BankServicesCostCalculator />;
     case "renda-variavel-limite-exposicao-risco":
       return <VariableIncomeRiskCalculator />;
+    case "mei-controle-faturamento-limite-anual":
+      return <MeiRevenuePlanner />;
     default:
       return null;
   }
+}
+
+function MeiRevenuePlanner() {
+  const [annualLimit, setAnnualLimit] = useState(110000);
+  const [revenueToDate, setRevenueToDate] = useState(54000);
+  const [monthsElapsed, setMonthsElapsed] = useState(8);
+  const safeMonthsElapsed = Math.min(12, Math.max(1, monthsElapsed));
+  const monthsRemaining = Math.max(0, 12 - safeMonthsElapsed);
+  const remainingLimit = Math.max(0, annualLimit - revenueToDate);
+  const averageSoFar = revenueToDate / safeMonthsElapsed;
+  const projectedRevenue = averageSoFar * 12;
+  const monthlyRoom = monthsRemaining > 0 ? remainingLimit / monthsRemaining : 0;
+  const formatBRL = (value: number) => new Intl.NumberFormat("pt-BR", {
+    style: "currency", currency: "BRL", maximumFractionDigits: 2,
+  }).format(value);
+
+  return (
+    <section style={styles.card} aria-labelledby="planejador-faturamento-mei">
+      <div style={styles.header}>
+        <TrendingUp size={24} style={{ color: "var(--primary)" }} />
+        <h3 id="planejador-faturamento-mei" style={styles.title}>Planejador de faturamento do MEI</h3>
+      </div>
+      <p style={styles.description}>Informe o limite anual vigente mostrado no Portal do Empreendedor, o faturamento bruto acumulado e quantos meses já transcorreram. A ferramenta projeta o ritmo de receita; ela não apura tributos nem confirma enquadramento.</p>
+      <div style={styles.grid}>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="limite-anual-mei">Limite anual vigente (R$)</label>
+          <div style={styles.inputWrapper}><DollarSign size={16} style={styles.inputIcon} /><input id="limite-anual-mei" type="number" min="1" step="100" value={annualLimit} onChange={(event) => setAnnualLimit(Math.max(1, Number(event.target.value)))} style={styles.input} /></div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="faturamento-acumulado-mei">Faturamento bruto acumulado (R$)</label>
+          <div style={styles.inputWrapper}><DollarSign size={16} style={styles.inputIcon} /><input id="faturamento-acumulado-mei" type="number" min="0" step="100" value={revenueToDate} onChange={(event) => setRevenueToDate(Math.max(0, Number(event.target.value)))} style={styles.input} /></div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="meses-decorridos-mei">Meses decorridos no ano</label>
+          <div style={styles.inputWrapper}><Calendar size={16} style={styles.inputIcon} /><input id="meses-decorridos-mei" type="number" min="1" max="12" value={monthsElapsed} onChange={(event) => setMonthsElapsed(Math.min(12, Math.max(1, Number(event.target.value))))} style={styles.input} /></div>
+        </div>
+      </div>
+      <div style={styles.resultsBlock}>
+        <div style={styles.resultItemBig}>
+          <span style={styles.resultLabel}>Projeção no ritmo atual</span>
+          <span style={{ ...styles.resultValueBig, color: projectedRevenue > annualLimit ? "#ef4444" : "var(--primary)" }}>{formatBRL(projectedRevenue)}</span>
+          <span style={styles.resultSubtitle}>{projectedRevenue > annualLimit ? "A projeção supera o limite informado; procure orientação antes de emitir novas notas ou receber novas vendas." : "A projeção permanece dentro do limite informado, considerando apenas a média atual."}</span>
+        </div>
+        <div style={styles.subResults}>
+          <div style={styles.resultItem}><span style={styles.resultLabel}>Espaço restante</span><strong style={styles.resultValue}>{formatBRL(remainingLimit)}</strong></div>
+          <div style={styles.resultItem}><span style={styles.resultLabel}>Média mensal restante</span><strong style={styles.resultValue}>{monthsRemaining > 0 ? formatBRL(monthlyRoom) : "Ano encerrado"}</strong></div>
+        </div>
+      </div>
+      <p style={{ ...styles.hint, marginTop: 20 }}>Simulação educativa. O limite pode ser proporcional no ano de abertura e regras transitórias podem alterar o enquadramento. Confirme o teto aplicável, receitas que entram no faturamento e consequências do excesso nos canais oficiais ou com profissional habilitado.</p>
+    </section>
+  );
 }
 
 function VariableIncomeRiskCalculator() {
