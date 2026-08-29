@@ -5,6 +5,7 @@ import { getContentExcerpt } from "@/lib/content-utils";
 import { getAllArticles, getCategories, getSitePage } from "@/lib/content";
 import type { Article } from "@/lib/content-types";
 import { formatArticleTitle } from "@/lib/text";
+import { formatEditorialDate } from "@/lib/date";
 import { FavoriteCategoryButton, ReadingMemory } from "@/components/ReadingMemory";
 
 export const dynamic = "force-dynamic";
@@ -116,7 +117,12 @@ export default async function Home({
                   lang
                 )}
               </h2>
-              <p>{new Date(featuredArticles[0].created_at || "").toLocaleDateString(isEn ? "en-US" : "pt-BR")}</p>
+              <p>
+                {formatEditorialDate(
+                  featuredArticles[0].published_at || featuredArticles[0].created_at,
+                  isEn ? "en-US" : "pt-BR"
+                )}
+              </p>
             </Link>
           )}
           <div className="featured-side">
@@ -168,7 +174,7 @@ export default async function Home({
                     <p style={{ marginBottom: 24 }}>{excerpt}</p>
                     <div className="article-meta">
                       <span>
-                        {new Date(article.created_at || "").toLocaleDateString(isEn ? "en-US" : "pt-BR", {
+                        {formatEditorialDate(article.published_at || article.created_at, isEn ? "en-US" : "pt-BR", {
                           year: "numeric",
                           month: "long",
                           day: "numeric",

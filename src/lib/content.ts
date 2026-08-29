@@ -71,11 +71,11 @@ export async function getAllArticles(): Promise<Article[]> {
     const { data, error } = await supabase
       .from("articles")
       .select(
-        "id, slug, title_pt, title_en, seo_description, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at"
+        "id, slug, title_pt, title_en, seo_description, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at, published_at"
       )
       .eq("status", "published")
       .lte("published_at", new Date().toISOString())
-      .order("created_at", { ascending: false });
+      .order("published_at", { ascending: false });
     if (error) throw error;
     return withCategories(data || []);
   } catch (error) {
@@ -92,7 +92,7 @@ export async function getArticleBySlug(slug: string): Promise<Article | null> {
     const { data, error } = await supabase
       .from("articles")
       .select(
-        "id, slug, title_pt, title_en, seo_description, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at"
+        "id, slug, title_pt, title_en, seo_description, content_pt, content_en, cover_image, cover_alt, category_id, is_featured, status, created_at, published_at"
       )
       .eq("slug", slug)
       .eq("status", "published")

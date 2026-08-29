@@ -10,6 +10,7 @@ import { getArticleSupplement } from "@/lib/article-supplements";
 import { ArticleEngagement } from "@/components/ArticleEngagement";
 import FinanceTool from "@/components/FinanceTools";
 import { renderSafeMarkdown } from "@/lib/safe-markdown";
+import { formatEditorialDate } from "@/lib/date";
 
 export const dynamic = "force-dynamic";
 
@@ -506,7 +507,8 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
               <Clock size={14} /> {readingTime}
             </span>
             <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <Calendar size={14} /> {copy.updated}: {article.created_at && new Date(article.created_at).toLocaleDateString("pt-BR")}
+              <Calendar size={14} /> {copy.updated}:{" "}
+              {formatEditorialDate(article.published_at || article.created_at, "pt-BR")}
             </span>
             <span
               style={{
