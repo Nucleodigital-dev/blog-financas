@@ -38,7 +38,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const body = await request.json();
     const { title_pt, content_pt, title_en, content_en, seo_description, slug, cover_image, cover_alt, category_id, is_featured, status, published_at } = body;
     const nextStatus = status === 'scheduled' ? 'scheduled' : status === 'published' ? 'published' : 'draft';
-    if (nextStatus === 'scheduled' && (!published_at || Number.isNaN(Date.parse(published_at)))) return NextResponse.json({ error: 'Valid publication date is required' }, { status: 400 });
+    const validPublishedAt = published_at && !Number.isNaN(Date.parse(published_at))
+      ? new Date(published_at).toISOString()
+      : null;
+    if (nextStatus === 'scheduled' && !validPublishedAt) return NextResponse.json({ error: 'Valid publication date is required' }, { status: 400 });
     
     if (!id) {
       return NextResponse.json({ error: 'Article ID is required' }, { status: 400 });
@@ -62,7 +65,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         category_id: category_id || null,
         is_featured: is_featured ? true : false,
         status: nextStatus,
-        published_at: nextStatus === 'published' ? new Date().toISOString() : published_at || null,
+        published_at: nextStatus === 'published' ? validPublishedAt || new Date().toISOString() : validPublishedAt,
         approved_at: nextStatus === 'scheduled' ? new Date().toISOString() : null
       })
       .eq('id', id);
