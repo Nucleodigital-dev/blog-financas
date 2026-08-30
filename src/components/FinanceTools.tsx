@@ -12,6 +12,7 @@ export default function FinanceTool({ slug }: ToolProps) {
     case "calculadora-juros-compostos":
       return <CompoundInterestCalculator />;
     case "simulador-reserva-emergencia":
+    case "reserva-emergencia-meta-aportes":
       return <EmergencyFundSimulator />;
     case "calculadora-cet":
       return <CetCalculator />;
@@ -24,6 +25,7 @@ export default function FinanceTool({ slug }: ToolProps) {
     case "planejador-reserva-impostos":
       return <TaxReservePlanner />;
     case "orcamento-apertado-priorizar-gastos":
+    case "controle-de-gastos-limite-semanal":
       return <BudgetGapCalculator />;
     case "pacote-bancario-ou-servicos-avulsos":
       return <BankServicesCostCalculator />;
