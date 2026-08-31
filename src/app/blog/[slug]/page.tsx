@@ -217,10 +217,12 @@ export async function generateMetadata({ params, searchParams }: BlogPostProps):
     description,
     alternates: {
       canonical: canonicalPath,
-      languages: {
-        "pt-BR": canonicalPath,
-        "en-US": `${canonicalPath}?lang=en`,
-      },
+      languages: hasEnglish
+        ? {
+            "pt-BR": canonicalPath,
+            "en-US": `${canonicalPath}?lang=en`,
+          }
+        : undefined,
     },
     openGraph: {
       title,
@@ -872,3 +874,4 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
     </>
   );
 }
+

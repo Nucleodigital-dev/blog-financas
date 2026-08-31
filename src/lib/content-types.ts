@@ -50,6 +50,9 @@ export type Article = {
 export type SitemapArticle = {
   slug: string | null;
   created_at: string | null;
+  published_at: string | null;
+  title_en: string | null;
+  content_en: unknown;
 };
 
 export type SiteLink = {
@@ -90,3 +93,4 @@ export type SitePage = {
   sections?: SitePageSection[];
   cta?: SiteLink | null;
 };
+

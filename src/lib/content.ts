@@ -154,9 +154,10 @@ export async function getSitemapArticles(): Promise<SitemapArticle[]> {
   try {
     const { data, error } = await supabase
       .from("articles")
-      .select("slug, created_at")
+      .select("slug, created_at, published_at, title_en, content_en")
       .eq("status", "published")
-      .order("created_at", { ascending: false });
+      .lte("published_at", new Date().toISOString())
+      .order("published_at", { ascending: false });
     if (error) throw error;
     return data || [];
   } catch (error) {
@@ -172,3 +173,4 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 export async function getSitePage(slug: string): Promise<SitePage | null> {
   return defaultPages[slug] || null;
 }
+
