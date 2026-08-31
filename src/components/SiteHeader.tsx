@@ -48,6 +48,7 @@ export function SiteHeader({ categories, navigationItems, logo, logoAlt }: SiteH
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const closeMenu = () => setIsOpen(false);
+  const categoryNavigationItems = navigationItems.filter((item) => Boolean(item.categorySlug));
 
   return (
     <header className="header">
@@ -62,7 +63,7 @@ export function SiteHeader({ categories, navigationItems, logo, logoAlt }: SiteH
         </Link>
 
         <nav className="desktop-nav" aria-label="Navegação principal">
-          {navigationItems.map((item) => {
+          {categoryNavigationItems.map((item) => {
             const href = resolveHref(item);
             const subcategories = getSubcategories(item, categories);
 
@@ -105,7 +106,7 @@ export function SiteHeader({ categories, navigationItems, logo, logoAlt }: SiteH
       <div id="mobile-menu" className={isOpen ? "mobile-menu open" : "mobile-menu"}>
         <div className="container mobile-menu-inner">
           <nav aria-label="Menu mobile">
-            {navigationItems.map((item) => {
+            {categoryNavigationItems.map((item) => {
               const href = resolveHref(item);
               const subcategories = getSubcategories(item, categories);
 
@@ -147,3 +148,4 @@ export function SiteHeader({ categories, navigationItems, logo, logoAlt }: SiteH
     </header>
   );
 }
+

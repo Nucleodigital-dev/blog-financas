@@ -3,7 +3,6 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getContentExcerpt } from "@/lib/content-utils";
 import { getAllArticles, getCategories, getSitePage } from "@/lib/content";
-import type { Article } from "@/lib/content-types";
 import { formatArticleTitle } from "@/lib/text";
 import { formatEditorialDate } from "@/lib/date";
 import { FavoriteCategoryButton, ReadingMemory } from "@/components/ReadingMemory";
@@ -58,15 +57,6 @@ export default async function Home({
     }
   }
 
-  let featuredArticles: Article[] = [];
-  let regularArticles: Article[] = displayedArticles;
-
-  if (!categorySlug) {
-    featuredArticles = displayedArticles.filter((article) => Boolean(article.is_featured)).slice(0, 3);
-    const featuredIds = featuredArticles.map((article) => article.id);
-    regularArticles = displayedArticles.filter((article) => !featuredIds.includes(article.id));
-  }
-
   const latestArticle = allArticles[0]
     ? {
         slug: allArticles[0].slug,
@@ -96,58 +86,11 @@ export default async function Home({
 
       {!categorySlug && <ReadingMemory latestArticle={latestArticle} />}
 
-      {!categorySlug && featuredArticles.length > 0 && (
-        <div className="bento-grid">
-          {featuredArticles[0] && (
-            <Link href={`/blog/${featuredArticles[0].slug}?lang=${lang}`} className="featured-main">
-              {featuredArticles[0].cover_image && (
-                <Image
-                  src={featuredArticles[0].cover_image}
-                  alt={
-                    featuredArticles[0].cover_alt ||
-                    (isEn && featuredArticles[0].title_en ? featuredArticles[0].title_en : featuredArticles[0].title_pt)
-                  }
-                  fill
-                  style={{ objectFit: "cover", zIndex: 0 }}
-                />
-              )}
-              <h2>
-                {formatArticleTitle(
-                  isEn && featuredArticles[0].title_en ? featuredArticles[0].title_en : featuredArticles[0].title_pt,
-                  lang
-                )}
-              </h2>
-              <p>
-                {formatEditorialDate(
-                  featuredArticles[0].published_at || featuredArticles[0].created_at,
-                  isEn ? "en-US" : "pt-BR"
-                )}
-              </p>
-            </Link>
-          )}
-          <div className="featured-side">
-            {featuredArticles.slice(1, 3).map((article) => (
-              <Link href={`/blog/${article.slug}?lang=${lang}`} key={article.id} className="featured-side-item">
-                {article.cover_image && (
-                  <Image
-                    src={article.cover_image}
-                    alt={article.cover_alt || (isEn && article.title_en ? article.title_en : article.title_pt)}
-                    fill
-                    style={{ objectFit: "cover", zIndex: 0 }}
-                  />
-                )}
-                <h2>{formatArticleTitle(isEn && article.title_en ? article.title_en : article.title_pt, lang)}</h2>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
       <div className="layout-with-sidebar">
         <div>
           {categorySlug && <h2 style={{ marginBottom: 32, fontSize: "2rem", fontFamily: "var(--font-heading)" }}>Últimos artigos</h2>}
           <div className="article-grid">
-            {regularArticles.map((article) => {
+            {displayedArticles.map((article) => {
               const title = formatArticleTitle(isEn && article.title_en ? article.title_en : article.title_pt, lang);
               const content = isEn && article.content_en ? article.content_en : article.content_pt;
               const excerpt = getContentExcerpt(content);
@@ -185,7 +128,7 @@ export default async function Home({
                 </Link>
               );
             })}
-            {regularArticles.length === 0 && (
+            {displayedArticles.length === 0 && (
               <div style={{ padding: "64px 0", color: "var(--text-muted)" }}>
                 <p>{isEn ? "No articles published yet." : "Nenhum artigo publicado ainda."}</p>
               </div>
@@ -226,3 +169,4 @@ export default async function Home({
     </>
   );
 }
+

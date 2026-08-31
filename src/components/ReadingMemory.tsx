@@ -1,17 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Bell, Star } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   CONSENT_UPDATED_EVENT,
   FAVORITE_CATEGORIES_KEY,
   LATEST_ARTICLE_NOTIFIED_KEY,
   LATEST_ARTICLE_SEEN_KEY,
   PrivacyPreferences,
-  RECENT_ARTICLES_KEY,
-  SAVED_ARTICLES_KEY,
   dispatchPreferenceUpdate,
   readStoredPrivacyPreferences,
 } from "@/lib/privacy";
@@ -25,15 +22,6 @@ type ReadingMemoryProps = {
   latestArticle?: LatestArticle | null;
 };
 
-function readArticles(key: string): StoredArticle[] {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(key) || "[]");
-    return Array.isArray(parsed) ? parsed.slice(0, 4) : [];
-  } catch {
-    return [];
-  }
-}
-
 function allowsPreferenceMemory(preferences: PrivacyPreferences | null) {
   return Boolean(preferences?.preferences);
 }
@@ -43,25 +31,16 @@ function allowsNotifications(preferences: PrivacyPreferences | null) {
 }
 
 export function ReadingMemory({ latestArticle }: ReadingMemoryProps) {
-  const [savedArticles, setSavedArticles] = useState<StoredArticle[]>([]);
-  const [recentArticles, setRecentArticles] = useState<StoredArticle[]>([]);
   const [showLatestNotice, setShowLatestNotice] = useState(false);
-  const [memoryAllowed, setMemoryAllowed] = useState(false);
 
   const refresh = useCallback(() => {
     const preferences = readStoredPrivacyPreferences();
     const canRemember = allowsPreferenceMemory(preferences);
-    setMemoryAllowed(canRemember);
 
     if (!canRemember) {
-      setSavedArticles([]);
-      setRecentArticles([]);
       setShowLatestNotice(false);
       return;
     }
-
-    setSavedArticles(readArticles(SAVED_ARTICLES_KEY));
-    setRecentArticles(readArticles(RECENT_ARTICLES_KEY));
 
     if (!latestArticle) {
       setShowLatestNotice(false);
@@ -97,13 +76,6 @@ export function ReadingMemory({ latestArticle }: ReadingMemoryProps) {
     };
   }, [refresh]);
 
-  const displayArticles = useMemo(() => {
-    const recentOnly = recentArticles.filter(
-      (recent) => !savedArticles.some((saved) => saved.slug === recent.slug)
-    );
-    return { saved: savedArticles.slice(0, 3), recent: recentOnly.slice(0, 3) };
-  }, [recentArticles, savedArticles]);
-
   const dismissLatestNotice = () => {
     if (latestArticle) {
       localStorage.setItem(LATEST_ARTICLE_SEEN_KEY, latestArticle.slug);
@@ -112,7 +84,7 @@ export function ReadingMemory({ latestArticle }: ReadingMemoryProps) {
     setShowLatestNotice(false);
   };
 
-  if (!memoryAllowed && !showLatestNotice) return null;
+  if (!showLatestNotice) return null;
 
   return (
     <section className="reading-memory" aria-label="Preferências de leitura">
@@ -136,38 +108,7 @@ export function ReadingMemory({ latestArticle }: ReadingMemoryProps) {
           </div>
         </div>
       )}
-
-      {memoryAllowed && (displayArticles.saved.length > 0 || displayArticles.recent.length > 0) && (
-        <div className="reading-memory-grid">
-          {displayArticles.saved.length > 0 && (
-            <ReadingList title="Salvos para depois" articles={displayArticles.saved} />
-          )}
-          {displayArticles.recent.length > 0 && (
-            <ReadingList title="Vistos recentemente" articles={displayArticles.recent} />
-          )}
-        </div>
-      )}
     </section>
-  );
-}
-
-function ReadingList({ title, articles }: { title: string; articles: StoredArticle[] }) {
-  return (
-    <div>
-      <h2>{title}</h2>
-      <div className="reading-memory-list">
-        {articles.map((article) => (
-          <Link href={article.href} key={article.slug} className="reading-memory-item">
-            {article.image && (
-              <span>
-                <Image src={article.image} alt="" fill sizes="64px" style={{ objectFit: "cover" }} />
-              </span>
-            )}
-            <strong>{article.title}</strong>
-          </Link>
-        ))}
-      </div>
-    </div>
   );
 }
 
@@ -210,3 +151,4 @@ export function FavoriteCategoryButton({ slug, label }: { slug: string; label: s
     </button>
   );
 }
+
