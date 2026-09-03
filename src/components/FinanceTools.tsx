@@ -33,9 +33,60 @@ export default function FinanceTool({ slug }: ToolProps) {
       return <VariableIncomeRiskCalculator />;
     case "mei-controle-faturamento-limite-anual":
       return <MeiRevenuePlanner />;
+    case "calculadora-dividas-prazo-juros":
+      return <DebtPayoffCalculator />;
     default:
       return null;
   }
+}
+
+function DebtPayoffCalculator() {
+  const [balance, setBalance] = useState(8000);
+  const [monthlyRate, setMonthlyRate] = useState(2.5);
+  const [payment, setPayment] = useState(600);
+  const rate = Math.max(0, monthlyRate) / 100;
+  const firstInterest = balance * rate;
+  const canAmortize = payment > firstInterest && balance > 0;
+  const months = canAmortize ? (rate === 0 ? Math.ceil(balance / payment) : Math.ceil(-Math.log(1 - (rate * balance) / payment) / Math.log(1 + rate))) : 0;
+  const balanceBeforeLastPayment = canAmortize ? balance * Math.pow(1 + rate, Math.max(0, months - 1)) - payment * (rate === 0 ? Math.max(0, months - 1) : (Math.pow(1 + rate, Math.max(0, months - 1)) - 1) / rate) : 0;
+  const lastPayment = canAmortize ? Math.max(0, balanceBeforeLastPayment * (1 + rate)) : 0;
+  const totalPaid = canAmortize ? payment * Math.max(0, months - 1) + Math.min(payment, lastPayment) : 0;
+  const totalInterest = Math.max(0, totalPaid - balance);
+  const formatBRL = (value: number) => new Intl.NumberFormat("pt-BR", {
+    style: "currency", currency: "BRL", maximumFractionDigits: 2,
+  }).format(Number.isFinite(value) ? value : 0);
+
+  return (
+    <section style={styles.card} aria-labelledby="calculadora-dividas-prazo-juros">
+      <div style={styles.header}>
+        <DollarSign size={24} style={{ color: "var(--primary)" }} />
+        <h3 id="calculadora-dividas-prazo-juros" style={styles.title}>Calculadora educativa de quitação de dívidas</h3>
+      </div>
+      <p style={styles.description}>Informe o saldo, a taxa mensal e a parcela possível para estimar o prazo e o custo. O resultado é uma projeção e pode diferir da proposta oficial do credor.</p>
+      <div style={styles.grid}>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="saldo-divida">Saldo devedor (R$)</label>
+          <div style={styles.inputWrapper}><DollarSign size={16} style={styles.inputIcon} /><input id="saldo-divida" type="number" min="0" step="100" value={balance} onChange={(event) => setBalance(Math.max(0, Number(event.target.value)))} style={styles.input} /></div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="taxa-divida">Juros ao mês (%)</label>
+          <div style={styles.inputWrapper}><Percent size={16} style={styles.inputIcon} /><input id="taxa-divida" type="number" min="0" step="0.1" value={monthlyRate} onChange={(event) => setMonthlyRate(Math.max(0, Number(event.target.value)))} style={styles.input} /></div>
+        </div>
+        <div style={styles.inputContainer}>
+          <label style={styles.label} htmlFor="parcela-divida">Parcela mensal (R$)</label>
+          <div style={styles.inputWrapper}><DollarSign size={16} style={styles.inputIcon} /><input id="parcela-divida" type="number" min="0" step="50" value={payment} onChange={(event) => setPayment(Math.max(0, Number(event.target.value)))} style={styles.input} /></div>
+        </div>
+      </div>
+      {canAmortize ? (
+        <div style={styles.resultsBlock}>
+          <div style={styles.resultItemBig}><span style={styles.resultLabel}>Prazo estimado</span><span style={styles.resultValueBig}>{months} meses</span><span style={styles.resultSubtitle}>Total estimado: {formatBRL(totalPaid)} · juros estimados: {formatBRL(totalInterest)}</span></div>
+        </div>
+      ) : (
+        <p style={{ ...styles.hint, color: "#b45309" }}>A parcela precisa superar os juros do primeiro mês ({formatBRL(firstInterest)}) para a dívida diminuir.</p>
+      )}
+      <p style={{ ...styles.hint, marginTop: 20 }}>Use a taxa e o saldo informados pelo credor. Esta simulação não substitui contrato, proposta formal ou orientação profissional.</p>
+    </section>
+  );
 }
 
 function MeiRevenuePlanner() {
