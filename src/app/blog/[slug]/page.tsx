@@ -601,7 +601,7 @@ export default async function BlogPost({ params, searchParams }: BlogPostProps) 
         <div className="article-content">
           {legacyHtml && <div dangerouslySetInnerHTML={{ __html: legacyHtml }} />}
 
-          {["calculadora-juros-compostos", "simulador-reserva-emergencia", "reserva-emergencia-meta-aportes", "calculadora-cet", "simulador-independencia-financeira", "comparador-renda-fixa", "financas-pessoais-como-organizar-seu-dinheiro", "planejador-reserva-impostos", "orcamento-apertado-priorizar-gastos", "controle-de-gastos-limite-semanal", "pacote-bancario-ou-servicos-avulsos", "renda-variavel-limite-exposicao-risco", "mei-controle-faturamento-limite-anual", "calculadora-dividas-prazo-juros"].includes(slug) && (
+          {["calculadora-juros-compostos", "simulador-reserva-emergencia", "reserva-emergencia-meta-aportes", "calculadora-cet", "simulador-independencia-financeira", "comparador-renda-fixa", "financas-pessoais-como-organizar-seu-dinheiro", "planejador-reserva-impostos", "orcamento-apertado-priorizar-gastos", "controle-de-gastos-limite-semanal", "pacote-bancario-ou-servicos-avulsos", "renda-variavel-limite-exposicao-risco", "mei-controle-faturamento-limite-anual", "calculadora-dividas-prazo-juros", "simulador-aportes-meta-investimento"].includes(slug) && (
             <FinanceTool slug={slug} />
           )}
 
