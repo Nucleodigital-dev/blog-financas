@@ -10,6 +10,7 @@ type ToolProps = {
 export default function FinanceTool({ slug }: ToolProps) {
   switch (slug) {
     case "calculadora-juros-compostos":
+    case "simulador-aportes-meta-investimento":
       return <CompoundInterestCalculator />;
     case "simulador-reserva-emergencia":
     case "reserva-emergencia-meta-aportes":
